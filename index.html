@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard OTIF - On Running</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #111;
+            color: white;
+        }
+
+        header {
+            background-color: #35495e;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin: 0;
+            padding: 0.5rem 0;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            padding: 2rem;
+        }
+
+        .chart {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 6px;
+            margin-bottom: 2rem;
+            width: calc(50% - 1rem);
+            min-width: 300px;
+            overflow: hidden;
+        }
+
+        .center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .percent-value {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .chart {
+                width: 100%;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx"></script>
+</head>
+<body>
+    <header>
+        <h1>Dashboard OTIF - On Running</h1>
+    </header>
+    <div class="container">
+        <div class="chart">
+            <canvas id="totalPedidosPorMes"></canvas>
+        </div>
+        <div class="chart">
+            <canvas id="entregasPrazo"></canvas>
+        </div>
+        <div class="chart">
+            <canvas id="pedidosPorEstado"></canvas>
+        </div>
+        <div class="chart">
+            <canvas id="ocorrencias"></canvas>
+        </div>
+    </div>
+    <script>
+        fetch('KPI - On Running - 2023.xlsx')
+            .then(response => response.arrayBuffer())
+            .then(buffer => {
+                const data = new Uint8Array(buffer);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+                const meses = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
+
+                // Processar jsonData e criar os gráficos usando o Chart.js
+                const pedidosPorMes = Array(12).fill(0);
+                const entregasPrazo = { "Dentro do Prazo": 0, "Fora do Prazo": 0 };
+                const pedidosPorEstado = {};
+                const ocorrenciasData = {};
+
+                jsonData.forEach(row => {
+                    const mesIndex = meses.indexOf(row.Mês);
+                    pedidosPorMes[mesIndex]++;
+
+                    if (row['PRAZO ENTREGA'] === 'NO PRAZO') {
+                        entregasPrazo["Dentro do Prazo"]++;
+                    } else if (row['PRAZO ENTREGA'] === 'FORA DO PRAZO') {
+                        entregasPrazo["Fora do Prazo"]++;
+                    }
+
+                    const estado = row.Estado;
+                    pedidosPorEstado[estado] = (pedidosPorEstado[estado] || 0) + 1;
+
+                    const ocorrencia = row['Última Ocorrencia'];
+                    if (ocorrencia && ocorrencia !== 'undefined') {
+                        ocorrenciasData[ocorrencia] = (ocorrenciasData[ocorrencia] || 0) + 1;
+                    }
+                });
+
+                // Gráfico: Total de Pedidos por Mês
+                const ctxTotalPedidosPorMes = document.getElementById('totalPedidosPorMes').getContext('2d');
+                new Chart(ctxTotalPedidosPorMes, {
+                    type: 'bar',
+                    data: {
+                        labels: meses,
+                        datasets: [{
+                            label: 'Total de Pedidos por Mês',
+                            data: pedidosPorMes,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                stepSize: 1,
+                                callback: value => value.toLocaleString()
+                            }
+                        }
+                    }
+                });
+
+                // Gráfico: Entregas no Prazo e Fora do Prazo
+                const ctxEntregasPrazo = document.getElementById('entregasPrazo').getContext('2d');
+                new Chart(ctxEntregasPrazo, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(entregasPrazo),
+                        datasets: [{
+                            label: 'Entregas no Prazo e Fora do Prazo',
+                            data: Object.values(entregasPrazo),
+                            backgroundColor: ['rgba(75, 192, 192, 0.4)', 'rgba(255, 99, 132, 0.4)'],
+                            borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                stepSize: 1,
+                                callback: value => value.toLocaleString()
+                            }
+                        }
+                    }
+                });
+
+                // Gráfico: Pedidos por Estado (Porcentagem)
+                const totalPedidos = jsonData.length;
+                const porcentagensPorEstado = {};
+                for (const estado in pedidosPorEstado) {
+                    porcentagensPorEstado[estado] = (pedidosPorEstado[estado] / totalPedidos) * 100;
+                }
+
+                const ctxPedidosPorEstado = document.getElementById('pedidosPorEstado').getContext('2d');
+                new Chart(ctxPedidosPorEstado, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(porcentagensPorEstado),
+                        datasets: [{
+                            label: 'Pedidos por Estado (%)',
+                            data: Object.values(porcentagensPorEstado),
+                            backgroundColor: 'rgba(54, 162, 235, 0.4)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                stepSize: 10,
+                                callback: value => `${value}%`
+                            }
+                        }
+                    }
+                });
+
+                // Gráfico: Ocorrências
+                const ctxOcorrencias = document.getElementById('ocorrencias').getContext('2d');
+                new Chart(ctxOcorrencias, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(ocorrenciasData),
+                        datasets: [{
+                            label: 'Ocorrências',
+                            data: Object.values(ocorrenciasData),
+                            backgroundColor: 'rgba(255, 159, 64, 0.4)',
+                            borderColor: 'rgba(255, 159, 64, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                stepSize: 1,
+                                callback: value => value.toLocaleString()
+                            }
+                        }
+                    }
+                });
+
+                // Adicionar valores acima das barras nos gráficos
+                Chart.plugins.register({
+                    afterDatasetsDraw: function (chart) {
+                        const ctx = chart.ctx;
+                        chart.data.datasets.forEach(function (dataset, i) {
+                            const meta = chart.getDatasetMeta(i);
+                            if (!meta.hidden) {
+                                meta.data.forEach(function (bar, index) {
+                                    const data = dataset.data[index];
+                                    const yPos = bar._model.y - 5;
+                                    const xPos = bar._model.x;
+                                    ctx.fillText(data.toLocaleString(), xPos, yPos);
+                                });
+                            }
+                        });
+                    }
+                });
+            })
+            .catch(error => console.error(error));
+    </script>
+</body>
+</html>

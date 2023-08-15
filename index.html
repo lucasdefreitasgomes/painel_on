@@ -229,6 +229,12 @@
             const loadingMessage = document.querySelector("#loadingMessage");
             loadingMessage.style.display = "block";
 
+             // Função para saudar o usuário por voz
+            function greetUserByVoice() {
+                const welcomeMessage = new SpeechSynthesisUtterance("Seja bem-vindo ao Painel On Running.");
+                window.speechSynthesis.speak(welcomeMessage);
+            }
+
             fetch('KPI - On Running - 2023.xlsx')
                 .then(response => response.arrayBuffer())
                 .then(buffer => {
@@ -380,6 +386,9 @@
                     updateChartsAndTable("");
 
                     loadingMessage.style.display = "none";
+
+                    // Saudar o usuário por voz após os dados serem carregados
+                    greetUserByVoice();
                 })
                 .catch(error => console.error(error));
         });

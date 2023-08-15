@@ -1,65 +1,133 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard OTIF - On Running</title>
     <style>
+        /* Estilos do CSS aqui */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #111;
-            color: white;
+            background-color: #f5f5f5;
+            color: #333;
         }
 
         header {
-            background-color: #35495e;
+            background-color: #fff;
             color: white;
             text-align: center;
             padding: 1rem;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(16, 122, 243, 0.1);
         }
 
         h1 {
             font-size: 2rem;
             margin: 0;
-            padding: 0.5rem 0;
+            padding: 1rem 0;
+            color: #2196F3;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .container {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-around;
-            padding: 2rem;
+            padding: 1rem;
         }
 
-        .chart {
-            background-color: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+        /* Estilos para os cards */
+        .cards {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .card {
+            flex: 1;
+            background-color: #2196F3;
+            border-radius: 8px;
+            padding: 1rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 6px;
-            margin-bottom: 2rem;
-            width: calc(50% - 1rem);
-            min-width: 300px;
-            overflow: hidden;
+            text-align: center;
+            color: white;
+            margin: 1rem;
+            transition: transform 0.2s ease-in-out;
+            cursor: pointer;
         }
 
-        .center {
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .cardTitle {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .cardValue {
+            font-size: 1.5rem;
+        }
+
+        /* Estilo para o filtro de mês */
+        .month-filter {
+            margin: 1rem 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 100%;
         }
 
-        .percent-value {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
+        .month-filter label {
             font-weight: bold;
+            margin-right: 1rem;
+        }
+
+        .month-filter select {
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .chart {
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            width: 100%;
+            /* Alterado para ocupar todo o espaço */
+            max-width: 500px;
+            overflow: hidden;
+        }
+
+        .chartTitle {
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 1rem;
+            color: #2196F3;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .monthFilter {
+            margin-bottom: 1rem;
         }
 
         @media (max-width: 768px) {
@@ -68,188 +136,219 @@
             }
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx"></script>
 </head>
+
 <body>
     <header>
-        <h1>Dashboard OTIF - On Running</h1>
+        <h1>DASHBOARD - ANÁLISE DE PEDIDOS - ON RUNNING</h1>
     </header>
+    <div class="month-filter">
+        <label for="selectMonth">Filtrar por mês:</label>
+        <select id="selectMonth">
+            <option value="">Todos</option>
+            <option value="JAN">Janeiro</option>
+            <option value="FEV">Fevereiro</option>
+            <option value="MAR">Março</option>
+            <option value="ABR">Abril</option>
+            <option value="MAI">Maio</option>
+            <option value="JUN">Junho</option>
+            <option value="JUL">Julho</option>
+            <option value="AGO">Agosto</option>
+            <option value="SET">Setembro</option>
+            <option value="OUT">Outubro</option>
+            <option value="NOV">Novembro</option>
+            <option value="DEZ">Dezembro</option>
+        </select>
+    </div>
     <div class="container">
-        <div class="chart">
-            <canvas id="totalPedidosPorMes"></canvas>
+        <div class="cards">
+            <div class="card" id="totalPedidosAno">
+                <div class="cardTitle">Total de Pedidos</div>
+                <div class="cardValue" id="totalPedidosAnoValue"></div>
+            </div>
+            <div class="card" id="totalPedidosDevolvidos">
+                <div class="cardTitle">Total de Pedidos Devolvidos</div>
+                <div class="cardValue" id="totalPedidosDevolvidosValue"></div>
+            </div>
+            <div class="card" id="totalEstadosEnviados">
+                <div class="cardTitle">Total de Estados Atendidos</div>
+                <div class="cardValue" id="totalEstadosEnviadosValue"></div>
+            </div>
+            <div class="card" id="eficienciaEntregas">
+                <div class="cardTitle">Eficiência Nas Entregas</div>
+                <div class="cardValue" id="eficienciaEntregasValue"></div>
+            </div>
         </div>
-        <div class="chart">
-            <canvas id="entregasPrazo"></canvas>
+        <div class="chart" id="totalPedidosPorMes">
+            <div class="chartTitle">Total de Pedidos por Mês</div>
+            <div id="totalPedidosPorMesChart"></div>
         </div>
-        <div class="chart">
-            <canvas id="pedidosPorEstado"></canvas>
+        <div class="chart" id="entregasPrazo">
+            <div class="chartTitle">Entregas no Prazo e Fora do Prazo</div>
+            <div id="entregasPrazoChart"></div>
         </div>
-        <div class="chart">
-            <canvas id="ocorrencias"></canvas>
+        <div class="chart" id="pedidosPorEstado">
+            <div class="chartTitle">Pedidos por Estado</div>
+            <div id="pedidosPorEstadoChart"></div>
+        </div>
+        <div class="chart" id="quantidadePedidosPorTipo">
+            <div class="chartTitle">Quantidade de Pedidos por Tipo</div>
+            <div id="quantidadePedidosPorTipoChart"></div>
         </div>
     </div>
     <script>
-        fetch('KPI - On Running - 2023.xlsx')
-            .then(response => response.arrayBuffer())
-            .then(buffer => {
-                const data = new Uint8Array(buffer);
-                const workbook = XLSX.read(data, { type: 'array' });
-                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                const jsonData = XLSX.utils.sheet_to_json(worksheet);
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('KPI - On Running - 2023.xlsx')
+                .then(response => response.arrayBuffer())
+                .then(buffer => {
+                    const data = new Uint8Array(buffer);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-                const meses = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
+                    const meses = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
 
-                // Processar jsonData e criar os gráficos usando o Chart.js
-                const pedidosPorMes = Array(12).fill(0);
-                const entregasPrazo = { "Dentro do Prazo": 0, "Fora do Prazo": 0 };
-                const pedidosPorEstado = {};
-                const ocorrenciasData = {};
-
-                jsonData.forEach(row => {
-                    const mesIndex = meses.indexOf(row.Mês);
-                    pedidosPorMes[mesIndex]++;
-
-                    if (row['PRAZO ENTREGA'] === 'NO PRAZO') {
-                        entregasPrazo["Dentro do Prazo"]++;
-                    } else if (row['PRAZO ENTREGA'] === 'FORA DO PRAZO') {
-                        entregasPrazo["Fora do Prazo"]++;
+                    function formatNumber(number) {
+                        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                     }
 
-                    const estado = row.Estado;
-                    pedidosPorEstado[estado] = (pedidosPorEstado[estado] || 0) + 1;
+                    function updateChartsAndTable(selectedMonth) {
+                        // Processar jsonData e criar os gráficos usando a biblioteca ApexCharts.js
+                        const pedidosPorMes = Array(12).fill(0);
+                        const entregasPrazo = { "Dentro do Prazo": 0, "Fora do Prazo": 0 };
+                        const pedidosPorEstado = {};
+                        const quantidadePedidosPorTipo = { "B2B": 0, "B2C": 0 };
+                        let totalPedidos = 0;
 
-                    const ocorrencia = row['Última Ocorrencia'];
-                    if (ocorrencia && ocorrencia !== 'undefined') {
-                        ocorrenciasData[ocorrencia] = (ocorrenciasData[ocorrencia] || 0) + 1;
-                    }
-                });
+                        jsonData.forEach(row => {
+                            if (selectedMonth === "" || row.Mês === selectedMonth) {
+                                const mesIndex = meses.indexOf(row.Mês);
+                                pedidosPorMes[mesIndex]++;
 
-                // Gráfico: Total de Pedidos por Mês
-                const ctxTotalPedidosPorMes = document.getElementById('totalPedidosPorMes').getContext('2d');
-                new Chart(ctxTotalPedidosPorMes, {
-                    type: 'bar',
-                    data: {
-                        labels: meses,
-                        datasets: [{
-                            label: 'Total de Pedidos por Mês',
-                            data: pedidosPorMes,
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                stepSize: 1,
-                                callback: value => value.toLocaleString()
-                            }
-                        }
-                    }
-                });
+                                if (row['PRAZO ENTREGA'] === 'NO PRAZO') {
+                                    entregasPrazo["Dentro do Prazo"]++;
+                                } else if (row['PRAZO ENTREGA'] === 'FORA DO PRAZO') {
+                                    entregasPrazo["Fora do Prazo"]++;
+                                }
 
-                // Gráfico: Entregas no Prazo e Fora do Prazo
-                const ctxEntregasPrazo = document.getElementById('entregasPrazo').getContext('2d');
-                new Chart(ctxEntregasPrazo, {
-                    type: 'bar',
-                    data: {
-                        labels: Object.keys(entregasPrazo),
-                        datasets: [{
-                            label: 'Entregas no Prazo e Fora do Prazo',
-                            data: Object.values(entregasPrazo),
-                            backgroundColor: ['rgba(75, 192, 192, 0.4)', 'rgba(255, 99, 132, 0.4)'],
-                            borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                stepSize: 1,
-                                callback: value => value.toLocaleString()
-                            }
-                        }
-                    }
-                });
+                                const estado = row.Estado;
+                                pedidosPorEstado[estado] = (pedidosPorEstado[estado] || 0) + 1;
 
-                // Gráfico: Pedidos por Estado (Porcentagem)
-                const totalPedidos = jsonData.length;
-                const porcentagensPorEstado = {};
-                for (const estado in pedidosPorEstado) {
-                    porcentagensPorEstado[estado] = (pedidosPorEstado[estado] / totalPedidos) * 100;
-                }
+                                const tipoCliente = row['TIPO DE CLIENTE'];
+                                if (tipoCliente === 'B2B') {
+                                    quantidadePedidosPorTipo["B2B"]++;
+                                } else if (tipoCliente === 'B2C') {
+                                    quantidadePedidosPorTipo["B2C"]++;
+                                }
 
-                const ctxPedidosPorEstado = document.getElementById('pedidosPorEstado').getContext('2d');
-                new Chart(ctxPedidosPorEstado, {
-                    type: 'bar',
-                    data: {
-                        labels: Object.keys(porcentagensPorEstado),
-                        datasets: [{
-                            label: 'Pedidos por Estado (%)',
-                            data: Object.values(porcentagensPorEstado),
-                            backgroundColor: 'rgba(54, 162, 235, 0.4)',
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                stepSize: 10,
-                                callback: value => `${value}%`
-                            }
-                        }
-                    }
-                });
-
-                // Gráfico: Ocorrências
-                const ctxOcorrencias = document.getElementById('ocorrencias').getContext('2d');
-                new Chart(ctxOcorrencias, {
-                    type: 'bar',
-                    data: {
-                        labels: Object.keys(ocorrenciasData),
-                        datasets: [{
-                            label: 'Ocorrências',
-                            data: Object.values(ocorrenciasData),
-                            backgroundColor: 'rgba(255, 159, 64, 0.4)',
-                            borderColor: 'rgba(255, 159, 64, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                stepSize: 1,
-                                callback: value => value.toLocaleString()
-                            }
-                        }
-                    }
-                });
-
-                // Adicionar valores acima das barras nos gráficos
-                Chart.plugins.register({
-                    afterDatasetsDraw: function (chart) {
-                        const ctx = chart.ctx;
-                        chart.data.datasets.forEach(function (dataset, i) {
-                            const meta = chart.getDatasetMeta(i);
-                            if (!meta.hidden) {
-                                meta.data.forEach(function (bar, index) {
-                                    const data = dataset.data[index];
-                                    const yPos = bar._model.y - 5;
-                                    const xPos = bar._model.x;
-                                    ctx.fillText(data.toLocaleString(), xPos, yPos);
-                                });
+                                totalPedidos++;
                             }
                         });
+
+                        // Atualizar os cards com os valores solicitados
+                        document.querySelector("#totalPedidosDevolvidosValue").textContent = formatNumber(jsonData.filter(row => row.Status === 'Mercadoria devolvida' && (selectedMonth === "" || row.Mês === selectedMonth)).length);
+                        document.querySelector("#totalPedidosAnoValue").textContent = formatNumber(totalPedidos);
+                        document.querySelector("#totalEstadosEnviadosValue").textContent = formatNumber(Object.keys(pedidosPorEstado).length);
+
+                        // Atualizar a eficiência de entregas com o valor formatado
+                        const formattedEficienciaEntregas = ((entregasPrazo["Dentro do Prazo"] / totalPedidos) * 100).toFixed(2);
+                        document.querySelector("#eficienciaEntregasValue").textContent = `${formattedEficienciaEntregas}%`;
+
+                        // Gráfico: Total de Pedidos por Mês
+                        const totalPedidosPorMesOptions = {
+                            chart: {
+                                type: 'bar',
+                                height: 250 // Alterado para tamanho menor
+                            },
+                            series: [{
+                                name: 'Total de Pedidos',
+                                data: pedidosPorMes
+                            }],
+                            xaxis: {
+                                categories: meses
+                            },
+                            title: {
+                                text: 'Total de Pedidos por Mês',
+                                align: 'center'
+                            }
+                        };
+                        const totalPedidosPorMesChart = new ApexCharts(document.querySelector("#totalPedidosPorMesChart"), totalPedidosPorMesOptions);
+                        totalPedidosPorMesChart.render();
+
+                        // Gráfico: Entregas no Prazo e Fora do Prazo
+                        const entregasPrazoOptions = {
+                            chart: {
+                                type: 'donut',
+                                height: 250 // Alterado para tamanho menor
+                            },
+                            series: Object.values(entregasPrazo),
+                            labels: Object.keys(entregasPrazo),
+                            title: {
+                                text: 'Entregas no Prazo e Fora do Prazo',
+                                align: 'center'
+                            }
+                        };
+                        const entregasPrazoChart = new ApexCharts(document.querySelector("#entregasPrazoChart"), entregasPrazoOptions);
+                        entregasPrazoChart.render();
+
+                        // Tabela: Pedidos por Estado
+                        const pedidosPorEstadoTable = document.querySelector("#pedidosPorEstadoChart");
+                        let tableHtml = "<table>";
+                        tableHtml += "<thead><tr><th>Estado</th><th>Percentual</th></tr></thead>";
+                        tableHtml += "<tbody>";
+                        // Ordenar estados pelo percentual decrescente
+                        const sortedEstados = Object.keys(pedidosPorEstado).sort((a, b) => {
+                            const percentualA = (pedidosPorEstado[a] / jsonData.length) * 100;
+                            const percentualB = (pedidosPorEstado[b] / jsonData.length) * 100;
+                            return percentualB - percentualA;
+                        });
+                        // Mostrar apenas os 5 primeiros estados
+                        const top5Estados = sortedEstados.slice(0, 5);
+                        top5Estados.forEach(estado => {
+                            const percentual = ((pedidosPorEstado[estado] / jsonData.length) * 100).toFixed(2);
+                            tableHtml += `<tr><td>${estado}</td><td>${percentual}%</td></tr>`;
+                        });
+                        tableHtml += "</tbody></table>";
+                        pedidosPorEstadoTable.innerHTML = tableHtml;
+
+                        // Gráfico: Quantidade de Pedidos por Tipo
+                        const quantidadePedidosPorTipoOptions = {
+                            chart: {
+                                type: 'bar',
+                                height: 250 // Alterado para tamanho menor
+                            },
+                            series: [{
+                                name: 'Quantidade de Pedidos',
+                                data: Object.values(quantidadePedidosPorTipo)
+                            }],
+                            xaxis: {
+                                categories: Object.keys(quantidadePedidosPorTipo)
+                            },
+                            title: {
+                                text: 'Quantidade de Pedidos por Tipo',
+                                align: 'center'
+                            }
+                        };
+                        const quantidadePedidosPorTipoChart = new ApexCharts(document.querySelector("#quantidadePedidosPorTipoChart"), quantidadePedidosPorTipoOptions);
+                        quantidadePedidosPorTipoChart.render();
                     }
-                });
-            })
-            .catch(error => console.error(error));
+
+                    const selectMonth = document.getElementById("selectMonth");
+                    selectMonth.addEventListener("change", function () {
+                        const selectedMonth = selectMonth.value;
+                        updateChartsAndTable(selectedMonth);
+                    });
+
+                    // Inicializar com todos os valores
+                    updateChartsAndTable("");
+                })
+                .catch(error => console.error(error));
+        });
     </script>
 </body>
+
 </html>

@@ -11,7 +11,7 @@
             font-family: 'Roboto', Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f5f5f5;
+            background-color: #f6f5f0;
             color: #333;
         }
 
@@ -27,7 +27,7 @@
             font-size: 2rem;
             margin: 0;
             padding: 1rem 0;
-            color: #2196F3;
+            color: #003369;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
 
@@ -107,7 +107,7 @@
             font-size: 1.2rem;
             text-align: center;
             padding: 1rem;
-            color: #2196F3;
+            color: #003369;
         }
 
         table {
@@ -160,7 +160,7 @@
     <header style="display: flex; align-items: center; justify-content: center; padding: 1rem;">
         <div style="display: flex; align-items: center;">
             <img style="width: 365px;" src="https://br.kuehne-nagel.com/o/kn-lgo-theme/images/kuehne-nagel-logo-blue.png" alt="Kuehne + Nagel Logo" width="100">
-            <h1 style="font-size: 2rem; margin: 0 1rem; color: #2196F3; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);">DASHBOARD - ON RUNNING</h1>
+            <h1 style="font-size: 2rem; margin: 0 1rem; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);">DASHBOARD - ON RUNNING</h1>
         </div>
         <div style="display: flex; align-items: center;">
             <img style="width: 50px;height: 50px;border-radius: 50%;" src="https://www.therunnershub.net/wp-content/uploads/2017/01/11249876_1635506986735635_175419393_a.jpg" alt="The Runners Hub Logo" width="100" style="background: none;">
@@ -186,37 +186,37 @@
     </div>
     <div class="container">
         <div class="cards">
-            <div class="card rotate-animation" id="totalPedidosAno">
-                <div class="cardTitle">Total de Pedidos</div>
+            <div style="background-color: #003369;" class="card rotate-animation" id="totalPedidosAno">
+                <div class="cardTitle">TOTAL DE PEDIDOS</div>
                 <div class="cardValue" id="totalPedidosAnoValue"></div>
             </div>
             <div class="card rotate-animation" id="totalPedidosDevolvidos">
-                <div class="cardTitle">Total de Pedidos Devolvidos</div>
+                <div class="cardTitle">TOTAL DE PEDIDOS DEVOLVIDOS</div>
                 <div class="cardValue" id="totalPedidosDevolvidosValue"></div>
             </div>
-            <div class="card rotate-animation" id="totalEstadosEnviados">
-                <div class="cardTitle">Total de Estados Atendidos</div>
+            <div style="background-color: #08C792;" class="card rotate-animation" id="totalEstadosEnviados">
+                <div class="cardTitle">TOTAL DE ESTADOS ATENDIDOS</div>
                 <div class="cardValue" id="totalEstadosEnviadosValue"></div>
             </div>
-            <div class="card rotate-animation" id="eficienciaEntregas">
-                <div class="cardTitle">Eficiência Nas Entregas</div>
+            <div style="background-color: #62635B;" class="card rotate-animation" id="eficienciaEntregas">
+                <div class="cardTitle">EFICIÊNCIA NAS ENTREGAS</div>
                 <div class="cardValue" id="eficienciaEntregasValue"></div>
             </div>
         </div>
         <div class="chart" id="totalPedidosPorMes">
-            <div class="chartTitle">Total de Pedidos por Mês</div>
+            <div class="chartTitle">TOTAL DE PEDIDOS POR MÊS</div>
             <div id="totalPedidosPorMesChart"></div>
         </div>
         <div class="chart" id="entregasPrazo">
-            <div class="chartTitle">Entregas no Prazo e Fora do Prazo</div>
+            <div class="chartTitle">ACURACIDADE DE ENTREGAS</div>
             <div id="entregasPrazoChart"></div>
         </div>
         <div class="chart" id="pedidosPorEstado">
-            <div class="chartTitle">Pedidos por Estado</div>
+            <div class="chartTitle">TOP 5 ESTADOS DE ENTREGAS</div>
             <div id="pedidosPorEstadoChart"></div>
         </div>
         <div class="chart" id="quantidadePedidosPorTipo">
-            <div class="chartTitle">Quantidade de Pedidos por Tipo</div>
+            <div class="chartTitle">TIPO DE CLIENTE</div>
             <div id="quantidadePedidosPorTipoChart"></div>
         </div>
     </div>
@@ -278,6 +278,10 @@
                         const formattedEficienciaEntregas = ((entregasPrazo["Dentro do Prazo"] / totalPedidos) * 100).toFixed(2);
                         document.querySelector("#eficienciaEntregasValue").textContent = `${formattedEficienciaEntregas}%`;
 
+                        const customColors1 = ['#0099DA'];
+                        const customColors = ['#003369'];
+                        const customColors2 = ['#08C792'];
+
                         // Gráfico: Total de Pedidos por Mês
                         const totalPedidosPorMesOptions = {
                             chart: {
@@ -294,7 +298,8 @@
                             title: {
                                 // text: 'Total de Pedidos por Mês',
                                 align: 'center'
-                            }
+                            },
+                            colors: customColors
                         };
                         const totalPedidosPorMesChart = new ApexCharts(document.querySelector("#totalPedidosPorMesChart"), totalPedidosPorMesOptions);
                         totalPedidosPorMesChart.render();
@@ -351,7 +356,8 @@
                             title: {
                                 // text: 'Quantidade de Pedidos por Tipo',
                                 align: 'center'
-                            }
+                            },
+                            colors: customColors2
                         };
                         const quantidadePedidosPorTipoChart = new ApexCharts(document.querySelector("#quantidadePedidosPorTipoChart"), quantidadePedidosPorTipoOptions);
                         quantidadePedidosPorTipoChart.render();

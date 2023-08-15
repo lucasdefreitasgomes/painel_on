@@ -143,8 +143,14 @@
 </head>
 
 <body>
-    <header>
-        <h1>DASHBOARD - ANÁLISE DE PEDIDOS - ON RUNNING</h1>
+    <header style="display: flex; align-items: center; justify-content: center; padding: 1rem;">
+        <div style="display: flex; align-items: center;">
+            <img style="width: 365px;" src="https://br.kuehne-nagel.com/o/kn-lgo-theme/images/kuehne-nagel-logo-blue.png" alt="Kuehne + Nagel Logo" width="100">
+            <h1 style="font-size: 2rem; margin: 0 1rem; color: #2196F3; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);">DASHBOARD - ON RUNNING</h1>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <img style="width: 50px;height: 50px;border-radius: 50%;" src="https://www.therunnershub.net/wp-content/uploads/2017/01/11249876_1635506986735635_175419393_a.jpg" alt="The Runners Hub Logo" width="100" style="background: none;">
+        </div>
     </header>
     <div class="month-filter">
         <label for="selectMonth">Filtrar por mês:</label>
@@ -272,7 +278,7 @@
                                 categories: meses
                             },
                             title: {
-                                text: 'Total de Pedidos por Mês',
+                                // text: 'Total de Pedidos por Mês',
                                 align: 'center'
                             }
                         };
@@ -288,7 +294,7 @@
                             series: Object.values(entregasPrazo),
                             labels: Object.keys(entregasPrazo),
                             title: {
-                                text: 'Entregas no Prazo e Fora do Prazo',
+                                // text: 'Entregas no Prazo e Fora do Prazo',
                                 align: 'center'
                             }
                         };
@@ -329,7 +335,7 @@
                                 categories: Object.keys(quantidadePedidosPorTipo)
                             },
                             title: {
-                                text: 'Quantidade de Pedidos por Tipo',
+                                // text: 'Quantidade de Pedidos por Tipo',
                                 align: 'center'
                             }
                         };

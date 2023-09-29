@@ -258,7 +258,7 @@
                         const pedidosEmTransitoPorEstadoOptions = {
                             chart: {
                                 type: 'bar',
-                                height: 250
+                                height: 500 // Aumente a altura para tornar o gráfico maior
                             },
                             series: [{
                                 name: 'Pedidos em Trânsito',
@@ -271,6 +271,7 @@
                                 align: 'center'
                             }
                         };
+
 
                         // Renderizar o gráfico de pedidos em trânsito por estado
                         const pedidosEmTransitoPorEstadoChart = new ApexCharts(document.querySelector("#pedidosEmTransitoPorEstadoChart"), pedidosEmTransitoPorEstadoOptions);

@@ -80,7 +80,7 @@
         </div>
         <!-- Adicione um novo elemento HTML para o gráfico de pedidos em trânsito por estado -->
         <div class="chart" id="pedidosEmTransitoPorEstado">
-            <div class="chartTitle">PEDIDOS EM TRÂNSITO POR ESTADO</div>
+            <div class="chartTitle">Pedidos Em Trânsito por Estado</div>
             <div id="pedidosEmTransitoPorEstadoChart"></div>
         </div>
     </div>
@@ -108,6 +108,131 @@
 
                     function formatNumber(number) {
                         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                    }
+
+                    // Função para atualizar os gráficos e a tabela
+                    function updateChartsAndTable(selectedMonth) {
+                        // Processar jsonData e criar os gráficos usando a biblioteca ApexCharts.js
+                        const pedidosPorMes = Array(12).fill(0);
+                        const entregasPrazo = { "Dentro do Prazo": 0, "Fora do Prazo": 0 };
+                        const pedidosPorEstado = {};
+                        const quantidadePedidosPorTipo = { "B2B": 0, "B2C": 0 };
+                        let totalPedidos = 0;
+
+                        jsonData.forEach(row => {
+                            if (selectedMonth === "" || row.Mês === selectedMonth) {
+                                const mesIndex = meses.indexOf(row.Mês);
+                                pedidosPorMes[mesIndex]++;
+
+                                if (row['PRAZO ENTREGA'] === 'NO PRAZO') {
+                                    entregasPrazo["Dentro do Prazo"]++;
+                                } else if (row['PRAZO ENTREGA'] === 'FORA DO PRAZO') {
+                                    entregasPrazo["Fora do Prazo"]++;
+                                }
+
+                                const estado = row.Estado;
+                                pedidosPorEstado[estado] = (pedidosPorEstado[estado] || 0) + 1;
+
+                                const tipoCliente = row['TIPO DE CLIENTE'];
+                                if (tipoCliente === 'B2B') {
+                                    quantidadePedidosPorTipo["B2B"]++;
+                                } else if (tipoCliente === 'B2C') {
+                                    quantidadePedidosPorTipo["B2C"]++;
+                                }
+
+                                totalPedidos++;
+                            }
+                        });
+
+                        // Atualizar os cards com os valores solicitados
+                        document.querySelector("#totalPedidosDevolvidosValue").textContent = formatNumber(jsonData.filter(row => row.Status === 'Mercadoria devolvida' && (selectedMonth === "" || row.Mês === selectedMonth)).length);
+                        document.querySelector("#totalPedidosAnoValue").textContent = formatNumber(totalPedidos);
+                        document.querySelector("#totalEstadosEnviadosValue").textContent = formatNumber(Object.keys(pedidosPorEstado).length);
+
+                        // Atualizar a eficiência de entregas com o valor formatado
+                        const formattedEficienciaEntregas = ((entregasPrazo["Dentro do Prazo"] / totalPedidos) * 100).toFixed(2);
+                        document.querySelector("#eficienciaEntregasValue").textContent = `${formattedEficienciaEntregas}%`;
+
+                        const customColors1 = ['#0099DA'];
+                        const customColors = ['#003369'];
+                        const customColors2 = ['#08C792'];
+
+                        // Gráfico: Total de Pedidos por Mês
+                        const totalPedidosPorMesOptions = {
+                            chart: {
+                                type: 'bar',
+                                height: 250
+                            },
+                            series: [{
+                                name: 'Total de Pedidos',
+                                data: pedidosPorMes
+                            }],
+                            xaxis: {
+                                categories: meses
+                            },
+                            title: {
+                                align: 'center'
+                            },
+                            colors: customColors
+                        };
+                        const totalPedidosPorMesChart = new ApexCharts(document.querySelector("#totalPedidosPorMesChart"), totalPedidosPorMesOptions);
+                        totalPedidosPorMesChart.render();
+
+                        // Gráfico: Entregas no Prazo e Fora do Prazo
+                        const entregasPrazoOptions = {
+                            chart: {
+                                type: 'donut',
+                                height: 250
+                            },
+                            series: Object.values(entregasPrazo),
+                            labels: Object.keys(entregasPrazo),
+                            title: {
+                                align: 'center'
+                            }
+                        };
+                        const entregasPrazoChart = new ApexCharts(document.querySelector("#entregasPrazoChart"), entregasPrazoOptions);
+                        entregasPrazoChart.render();
+
+                        // Tabela: Pedidos por Estado
+                        const pedidosPorEstadoTable = document.querySelector("#pedidosPorEstadoChart");
+                        let tableHtml = "<table>";
+                        tableHtml += "<thead><tr><th>Estado</th><th>Percentual</th></tr></thead>";
+                        tableHtml += "<tbody>";
+                        // Ordenar estados pelo percentual decrescente
+                        const sortedEstados = Object.keys(pedidosPorEstado).sort((a, b) => {
+                            const percentualA = (pedidosPorEstado[a] / jsonData.length) * 100;
+                            const percentualB = (pedidosPorEstado[b] / jsonData.length) * 100;
+                            return percentualB - percentualA;
+                        });
+                        // Mostrar apenas os 5 primeiros estados
+                        const top5Estados = sortedEstados.slice(0, 5);
+                        top5Estados.forEach(estado => {
+                            const percentual = ((pedidosPorEstado[estado] / jsonData.length) * 100).toFixed(2);
+                            tableHtml += `<tr><td>${estado}</td><td>${percentual}%</td></tr>`;
+                        });
+                        tableHtml += "</tbody></table>";
+                        pedidosPorEstadoTable.innerHTML = tableHtml;
+
+                        // Gráfico: Quantidade de Pedidos por Tipo
+                        const quantidadePedidosPorTipoOptions = {
+                            chart: {
+                                type: 'bar',
+                                height: 250
+                            },
+                            series: [{
+                                name: 'Quantidade de Pedidos',
+                                data: Object.values(quantidadePedidosPorTipo)
+                            }],
+                            xaxis: {
+                                categories: Object.keys(quantidadePedidosPorTipo)
+                            },
+                            title: {
+                                align: 'center'
+                            },
+                            colors: customColors2
+                        };
+                        const quantidadePedidosPorTipoChart = new ApexCharts(document.querySelector("#quantidadePedidosPorTipoChart"), quantidadePedidosPorTipoOptions);
+                        quantidadePedidosPorTipoChart.render();
                     }
 
                     // Função para atualizar o gráfico de pedidos "Em trânsito" por estado
@@ -154,13 +279,15 @@
                     const selectMonth = document.getElementById("selectMonth");
                     selectMonth.addEventListener("change", function () {
                         const selectedMonth = selectMonth.value;
+                        
+                        // Atualize os gráficos e a tabela
                         updateChartsAndTable(selectedMonth);
 
-                        // Atualize também o gráfico de pedidos "Em trânsito" por estado
+                        // Atualize o gráfico de pedidos "Em trânsito" por estado
                         updatePedidosEmTransitoPorEstado(selectedMonth);
                     });
 
-                    // Inicializar com todos os valores
+                    // Inicialize com todos os valores
                     updateChartsAndTable("");
 
                     loadingMessage.style.display = "none";

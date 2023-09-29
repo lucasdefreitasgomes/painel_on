@@ -103,8 +103,7 @@ h1 {
 }
 
 #pedidosEmTransitoPorEstadoChart {
-    width: 960px; /* Ajuste a largura conforme necessário */
-    height: 250px; /* Ajuste a altura conforme necessário */
+    width: 100%; /* Ajuste a largura conforme necessário */
 }
 
 table {

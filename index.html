@@ -78,7 +78,7 @@
             <div class="chartTitle">TIPO DE CLIENTE</div>
             <div id="quantidadePedidosPorTipoChart"></div>
         </div>
-        <div class="chart" id="pedidosEmTransitoPorEstado">
+        <div class="chart" id="pedidosEmTransitoPorEstadoWrapper">
             <div class="chartTitle">PEDIDOS EM TRÂNSITO POR ESTADO</div>
             <div id="pedidosEmTransitoPorEstadoChart"></div>
         </div>
@@ -258,7 +258,8 @@
                         const pedidosEmTransitoPorEstadoOptions = {
                             chart: {
                                 type: 'bar',
-                                height: 250
+                                height: 250,
+                                width: '100%'
                             },
                             series: [{
                                 name: 'Pedidos em Trânsito',

@@ -102,9 +102,10 @@ h1 {
     color: #003369;
 }
 
-#pedidosEmTransitoPorEstadoChart {
-    width: 100%; /* Ajuste a largura conforme necessário */
+#pedidosEmTransitoPorEstadoWrapper {
+    width: 100%; /* Use a largura total disponível */
 }
+
 
 table {
     border-collapse: collapse;

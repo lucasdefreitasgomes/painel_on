@@ -102,6 +102,11 @@ h1 {
     color: #003369;
 }
 
+#pedidosEmTransitoPorEstadoChart {
+    width: 600px; /* Ajuste a largura conforme necessário */
+    height: 250px; /* Ajuste a altura conforme necessário */
+}
+
 table {
     border-collapse: collapse;
     width: 100%;

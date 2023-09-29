@@ -80,7 +80,7 @@
         </div>
         <!-- Adicione um novo elemento HTML para o gráfico de pedidos em trânsito por estado -->
         <div class="chart" id="pedidosEmTransitoPorEstado">
-            <div class="chartTitle">Pedidos Em Trânsito por Estado</div>
+            <div class="chartTitle">PEDIDOS EM TRÂNSITO POR ESTADO</div>
             <div id="pedidosEmTransitoPorEstadoChart"></div>
         </div>
     </div>
@@ -244,7 +244,7 @@
                             if (selectedMonth === "" || row.Mês === selectedMonth) {
                                 if (row.Status === 'Em trânsito') {
                                     const estado = row.Estado;
-                                    pedidosEmTransitoPorEstado[estado] = (pedidosEmTransitoPorEstado[estado] || 0) + 1;
+                                    pedidosEmTransitoPorEstado[Estado] = (pedidosEmTransitoPorEstado[Estado] || 0) + 1;
                                 }
                             }
                         });

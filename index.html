@@ -202,32 +202,87 @@
                         };
                         totalPedidosPorMesChart = new ApexCharts(document.querySelector("#totalPedidosPorMesChart"), totalPedidosPorMesOptions);
 
-                        // Gráfico: Entregas no Prazo e Fora do Prazo
-                        const entregasPrazoOptions = {
-                            chart: {
-                                type: 'donut',
-                                height: 250, // Tamanho fixo em pixels
-                            },
-                            series: Object.values(entregasPrazo),
-                            labels: Object.keys(entregasPrazo),
-                            title: {
-                                align: 'center'
-                            },
-                            plotOptions: {
-                                pie: {
-                                    donut: {
-                                        expandOnClick: false,
-                                        size: '65%', // O donut ocupará 65% do tamanho fixo
+                        var options = {
+                        series: [{
+                            name: 'Entregas',
+                            data: [
+                                (entregasPrazo['Dentro do Prazo'] / totalPedidos) * 100,
+                                (entregasPrazo['Fora do Prazo'] / totalPedidos) * 100
+                            ]
+                        }],
+                        chart: {
+                            height: 350,
+                            type: 'bar',
+                        },
+                        plotOptions: {
+                            bar: {
+                                borderRadius: 10,
+                                dataLabels: {
+                                    position: 'top', // top, center, bottom
+                                    formatter: function (val) {
+                                        return val.toFixed(2) + "%";
                                     },
-                                    dataLabels: {
-                                        formatter: function (val, opts) {
-                                            return `${opts.w.globals.series[opts.seriesIndex]}%`; // Exibe a porcentagem nos rótulos
-                                        }
-                                    }
                                 }
                             }
-                        };
-                        entregasPrazoChart = new ApexCharts(document.querySelector("#entregasPrazoChart"), entregasPrazoOptions);
+                        },
+                        dataLabels: {
+                            enabled: true,
+                            offsetY: -20,
+                            style: {
+                                fontSize: '12px',
+                                colors: ["#304758"]
+                            }
+                        },
+                        xaxis: {
+                            categories: ['Dentro do Prazo', 'Fora do Prazo'],
+                            position: 'top',
+                            axisBorder: {
+                                show: false
+                            },
+                            axisTicks: {
+                                show: false
+                            },
+                            crosshairs: {
+                                fill: {
+                                    type: 'gradient',
+                                    gradient: {
+                                        colorFrom: '#D8E3F0',
+                                        colorTo: '#BED1E6',
+                                        stops: [0, 100],
+                                        opacityFrom: 0.4,
+                                        opacityTo: 0.5,
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                enabled: true,
+                            }
+                        },
+                        yaxis: {
+                            axisBorder: {
+                                show: false
+                            },
+                            axisTicks: {
+                                show: false,
+                            },
+                            labels: {
+                                show: false,
+                            }
+                        },
+                        title: {
+                            text: 'Acuracidade de Entregas',
+                            floating: true,
+                            offsetY: 330,
+                            align: 'center',
+                            style: {
+                                color: '#444'
+                            }
+                        }
+                    };
+
+                    var chart = new ApexCharts(document.querySelector("#chart"), options);
+                    chart.render();
+
 
                         // Tabela: Pedidos por Estado
                         const pedidosPorEstadoTable = document.querySelector("#pedidosPorEstadoChart");

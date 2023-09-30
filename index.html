@@ -202,87 +202,31 @@
                         };
                         totalPedidosPorMesChart = new ApexCharts(document.querySelector("#totalPedidosPorMesChart"), totalPedidosPorMesOptions);
 
-                        var options = {
-                        series: [{
-                            name: 'Entregas',
-                            data: [
-                                (entregasPrazo['Dentro do Prazo'] / totalPedidos) * 100,
-                                (entregasPrazo['Fora do Prazo'] / totalPedidos) * 100
-                            ]
-                        }],
-                        chart: {
-                            height: 350,
-                            type: 'bar',
-                        },
-                        plotOptions: {
-                            bar: {
-                                borderRadius: 10,
-                                dataLabels: {
-                                    position: 'top', // top, center, bottom
-                                    formatter: function (val) {
-                                        return val.toFixed(2) + "%";
-                                    },
-                                }
-                            }
-                        },
-                        dataLabels: {
-                            enabled: true,
-                            offsetY: -20,
-                            style: {
-                                fontSize: '12px',
-                                colors: ["#304758"]
-                            }
-                        },
-                        xaxis: {
-                            categories: ['Dentro do Prazo', 'Fora do Prazo'],
-                            position: 'top',
-                            axisBorder: {
-                                show: false
+                        // Gráfico: Entregas no Prazo e Fora do Prazo
+                        const entregasPrazoOptions = {
+                            chart: {
+                                type: 'donut',
+                                height: 250, // Tamanho fixo em pixels
                             },
-                            axisTicks: {
-                                show: false
+                            series: Object.values(entregasPrazo),
+                            labels: Object.keys(entregasPrazo),
+                            title: {
+                                align: 'center'
                             },
-                            crosshairs: {
-                                fill: {
-                                    type: 'gradient',
-                                    gradient: {
-                                        colorFrom: '#D8E3F0',
-                                        colorTo: '#BED1E6',
-                                        stops: [0, 100],
-                                        opacityFrom: 0.4,
-                                        opacityTo: 0.5,
+                            plotOptions: {
+                                pie: {
+                                    donut: {
+                                        expandOnClick: false,
+                                        size: '65%', // O donut ocupará 100% do tamanho fixo
+                                        labels: {
+                                            show: true,
+                                            minAngleToShowLabel: 1, // Defina um ângulo mínimo para mostrar rótulos
+                                        }
                                     }
                                 }
-                            },
-                            tooltip: {
-                                enabled: true,
                             }
-                        },
-                        yaxis: {
-                            axisBorder: {
-                                show: false
-                            },
-                            axisTicks: {
-                                show: false,
-                            },
-                            labels: {
-                                show: false,
-                            }
-                        },
-                        title: {
-                            text: 'Acuracidade de Entregas',
-                            floating: true,
-                            offsetY: 330,
-                            align: 'center',
-                            style: {
-                                color: '#444'
-                            }
-                        }
-                    };
-
-                    var chart = new ApexCharts(document.querySelector("#chart"), options);
-                    chart.render();
-
+                        };
+                        entregasPrazoChart = new ApexCharts(document.querySelector("#entregasPrazoChart"), entregasPrazoOptions);
 
                         // Tabela: Pedidos por Estado
                         const pedidosPorEstadoTable = document.querySelector("#pedidosPorEstadoChart");

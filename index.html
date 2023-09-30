@@ -143,18 +143,20 @@
 
                         // Processar jsonData e criar os gráficos usando a biblioteca ApexCharts.js
                         const pedidosPorMes = Array(12).fill(0);
-                        let totalPedidosDentroPrazo = 0;
-                        let totalPedidosForaPrazo = 0;
+                        const entregasPrazo = { "Dentro do Prazo": 0, "Fora do Prazo": 0 };
                         const pedidosPorEstado = {};
                         const quantidadePedidosPorTipo = { "B2B": 0, "B2C": 0 };
                         let totalPedidos = 0;
 
                         jsonData.forEach(row => {
                             if (selectedMonth === "" || row.Mês === selectedMonth) {
+                                const mesIndex = meses.indexOf(row.Mês);
+                                pedidosPorMes[mesIndex]++;
+
                                 if (row['PRAZO ENTREGA'] === 'NO PRAZO') {
-                                    totalPedidosDentroPrazo++;
+                                    entregasPrazo["Dentro do Prazo"]++;
                                 } else if (row['PRAZO ENTREGA'] === 'FORA DO PRAZO') {
-                                    totalPedidosForaPrazo++;
+                                    entregasPrazo["Fora do Prazo"]++;
                                 }
 
                                 const estado = row.Estado;
@@ -203,7 +205,7 @@
                         // Gráfico: Entregas no Prazo e Fora do Prazo
                         const entregasPrazoOptions = {
                             chart: {
-                                type: 'donut',
+                                type: 'pie', // Altere o tipo para 'pie' (pizza)
                                 height: 250, // Tamanho fixo em pixels
                             },
                             series: Object.values(entregasPrazo),
@@ -213,20 +215,23 @@
                             },
                             plotOptions: {
                                 pie: {
+                                    size: '75%', // Ajuste o tamanho da pizza conforme necessário
+                                    startAngle: -90, // Define o ângulo inicial para -90 graus (para começar na parte superior)
+                                    endAngle: 90, // Define o ângulo final para 90 graus (para criar uma meia pizza)
                                     donut: {
                                         expandOnClick: false,
-                                        size: '65%', // O donut ocupará 100% do tamanho fixo
-                                        labels: {
-                                            show: true,
-                                            minAngleToShowLabel: 1, // Defina um ângulo mínimo para mostrar rótulos
-                                        }
+                                        background: 'transparent', // Remova o preenchimento do fundo
+                                    },
+                                    labels: {
+                                        show: true,
+                                        minAngleToShowLabel: 1, // Defina um ângulo mínimo para mostrar rótulos
+                                        position: 'top' // Coloque os rótulos na parte superior da pizza
                                     }
                                 }
                             }
                         };
 
-                        entregasPrazoChart.updateSeries([totalPedidosDentroPrazo, totalPedidosForaPrazo]);
-                        
+
                         // Tabela: Pedidos por Estado
                         const pedidosPorEstadoTable = document.querySelector("#pedidosPorEstadoChart");
 

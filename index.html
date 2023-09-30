@@ -205,55 +205,28 @@
                         // Gráfico: Entregas no Prazo e Fora do Prazo
                         const entregasPrazoOptions = {
                             chart: {
-                                type: 'bar',
-                                height: 300, // Tamanho fixo em pixels
+                                type: 'donut',
+                                height: 250, // Tamanho fixo em pixels
+                            },
+                            series: Object.values(entregasPrazo),
+                            labels: Object.keys(entregasPrazo),
+                            title: {
+                                align: 'center'
                             },
                             plotOptions: {
-                                bar: {
-                                    horizontal: false, // Alterado para gráfico de barras vertical
-                                    columnWidth: '40%', // Espaçamento entre barras
-                                    endingShape: 'rounded', // Barras com cantos arredondados
-                                },
-                            },
-                            dataLabels: {
-                                enabled: true, // Mostrar rótulos de dados nas barras
-                                offsetY: -20, // Posição vertical dos rótulos de dados
-                                style: {
-                                    fontSize: '12px', // Tamanho da fonte dos rótulos de dados
-                                },
-                                formatter: function (val) {
-                                    return val + '%'; // Adicionar '%' aos rótulos de dados
-                                },
-                            },
-                            xaxis: {
-                                categories: Object.keys(entregasPrazo),
-                            },
-                            yaxis: {
-                                title: {
-                                    text: 'Porcentagem',
-                                },
-                            },
-                            title: {
-                                text: 'Entregas no Prazo e Fora do Prazo',
-                                align: 'center',
-                            },
-                            series: [
-                                {
-                                    name: 'Dentro do Prazo',
-                                    data: Object.values(entregasPrazo)["Dentro do Prazo"],
-                                },
-                                {
-                                    name: 'Fora do Prazo',
-                                    data: Object.values(entregasPrazo)["Fora do Prazo"],
-                                },
-                            ],
-                            legend: {
-                                position: 'top',
-                            },
+                                pie: {
+                                    donut: {
+                                        expandOnClick: false,
+                                        size: '100%', // O donut ocupará 100% do tamanho fixo
+                                        labels: {
+                                            show: true,
+                                            minAngleToShowLabel: 5, // Defina um ângulo mínimo para mostrar rótulos
+                                        }
+                                    }
+                                }
+                            }
                         };
-
                         entregasPrazoChart = new ApexCharts(document.querySelector("#entregasPrazoChart"), entregasPrazoOptions);
-
 
 
 

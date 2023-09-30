@@ -199,9 +199,8 @@
                         // Gráfico: Entregas no Prazo e Fora do Prazo
                         const entregasPrazoOptions = {
                             chart: {
-                                type: 'donut',
+                                type: 'bar',
                                 height: 250, // Alterado para tamanho menor
-                                width: 200
                             },
                             series: Object.values(entregasPrazo),
                             labels: Object.keys(entregasPrazo),

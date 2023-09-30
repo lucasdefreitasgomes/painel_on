@@ -146,7 +146,7 @@
                         document.querySelector("#totalPedidosDevolvidosValue").textContent = formatNumber(jsonData.filter(row => row.Status === 'Mercadoria devolvida' && (selectedMonth === "" || row.Mês === selectedMonth)).length);
                         document.querySelector("#totalPedidosAnoValue").textContent = formatNumber(totalPedidos);
                         document.querySelector("#totalEstadosEnviadosValue").textContent = formatNumber(Object.keys(pedidosPorEstado).length);
-
+                        
                         // Atualizar a eficiência de entregas com o valor formatado
                         const formattedEficienciaEntregas = ((entregasPrazo["Dentro do Prazo"] / totalPedidos) * 100).toFixed(2);
                         document.querySelector("#eficienciaEntregasValue").textContent = `${formattedEficienciaEntregas}%`;
@@ -280,7 +280,7 @@
 
                     const selectMonth = document.getElementById("selectMonth");
                     selectMonth.addEventListener("change", function () {
-                    const selectedMonth = selectMonth.value.toUpperCase(); // Converter para minúsculas
+                    const selectedMonth = selectMonth.value;
                     updateChartsAndTable(selectedMonth);
                     updatePedidosEmTransitoPorEstado(selectedMonth);
                 });

@@ -280,10 +280,10 @@
 
                     const selectMonth = document.getElementById("selectMonth");
                     selectMonth.addEventListener("change", function () {
-                        const selectedMonth = selectMonth.value;
-                        updateChartsAndTable(selectedMonth);
-                        updatePedidosEmTransitoPorEstado(selectedMonth);
-                    });
+                    const selectedMonth = selectMonth.value.toLowerCase(); // Converter para minúsculas
+                    updateChartsAndTable(selectedMonth);
+                    updatePedidosEmTransitoPorEstado(selectedMonth);
+                });
 
                     // Inicializar com todos os valores
                     updateChartsAndTable("");

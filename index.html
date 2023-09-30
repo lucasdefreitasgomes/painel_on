@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx"></script>
 </head>
 
 <body>
@@ -87,6 +89,9 @@
             const loadingMessage = document.querySelector("#loadingMessage");
             loadingMessage.style.display = "block";
 
+            // Variáveis globais para gráficos
+            let totalPedidosPorMesChart, entregasPrazoChart, quantidadePedidosPorTipoChart, pedidosPorEstadoChart, pedidosEmTransitoPorEstadoChart;
+
             // Função para saudar o usuário por voz
             function greetUserByVoice() {
                 const welcomeMessage = new SpeechSynthesisUtterance("Seja bem-vindo ao Painel On Running.");
@@ -107,7 +112,29 @@
                         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                     }
 
+                    // Função para limpar os gráficos antes de renderizar novos dados
+                    function clearCharts() {
+                        if (totalPedidosPorMesChart) {
+                            totalPedidosPorMesChart.destroy();
+                        }
+                        if (entregasPrazoChart) {
+                            entregasPrazoChart.destroy();
+                        }
+                        if (quantidadePedidosPorTipoChart) {
+                            quantidadePedidosPorTipoChart.destroy();
+                        }
+                        if (pedidosPorEstadoChart) {
+                            pedidosPorEstadoChart.destroy();
+                        }
+                        if (pedidosEmTransitoPorEstadoChart) {
+                            pedidosEmTransitoPorEstadoChart.destroy();
+                        }
+                    }
+
                     function updateChartsAndTable(selectedMonth) {
+                        // Limpar os gráficos antes de renderizar novos dados
+                        clearCharts();
+
                         // Processar jsonData e criar os gráficos usando a biblioteca ApexCharts.js
                         const pedidosPorMes = Array(12).fill(0);
                         const entregasPrazo = { "Dentro do Prazo": 0, "Fora do Prazo": 0 };
@@ -167,7 +194,7 @@
                             },
                             colors: ['#003369']
                         };
-                        const totalPedidosPorMesChart = new ApexCharts(document.querySelector("#totalPedidosPorMesChart"), totalPedidosPorMesOptions);
+                        totalPedidosPorMesChart = new ApexCharts(document.querySelector("#totalPedidosPorMesChart"), totalPedidosPorMesOptions);
 
                         // Gráfico: Entregas no Prazo e Fora do Prazo
                         const entregasPrazoOptions = {
@@ -181,7 +208,7 @@
                                 align: 'center'
                             }
                         };
-                        const entregasPrazoChart = new ApexCharts(document.querySelector("#entregasPrazoChart"), entregasPrazoOptions);
+                        entregasPrazoChart = new ApexCharts(document.querySelector("#entregasPrazoChart"), entregasPrazoOptions);
 
                         // Tabela: Pedidos por Estado
                         const pedidosPorEstadoTable = document.querySelector("#pedidosPorEstadoChart");
@@ -204,7 +231,7 @@
                             },
                             colors: ['#08C792']
                         };
-                        const quantidadePedidosPorTipoChart = new ApexCharts(document.querySelector("#quantidadePedidosPorTipoChart"), quantidadePedidosPorTipoOptions);
+                        quantidadePedidosPorTipoChart = new ApexCharts(document.querySelector("#quantidadePedidosPorTipoChart"), quantidadePedidosPorTipoOptions);
 
                         // Renderizar os gráficos
                         totalPedidosPorMesChart.render();
@@ -213,6 +240,7 @@
 
                         // Renderizar a tabela de Pedidos por Estado
                         renderPedidosPorEstadoTable(pedidosPorEstadoTable, pedidosPorEstado);
+                        updatePedidosEmTransitoPorEstado(selectedMonth);
                     }
 
                     // Função para renderizar a tabela de Pedidos por Estado
@@ -270,7 +298,7 @@
                         };
 
                         // Renderizar o gráfico de pedidos em trânsito por estado
-                        const pedidosEmTransitoPorEstadoChart = new ApexCharts(document.querySelector("#pedidosEmTransitoPorEstadoChart"), pedidosEmTransitoPorEstadoOptions);
+                        pedidosEmTransitoPorEstadoChart = new ApexCharts(document.querySelector("#pedidosEmTransitoPorEstadoChart"), pedidosEmTransitoPorEstadoOptions);
                         pedidosEmTransitoPorEstadoChart.render();
                     }
 
@@ -278,13 +306,10 @@
                     selectMonth.addEventListener("change", function () {
                         const selectedMonth = selectMonth.value;
                         updateChartsAndTable(selectedMonth);
-                        updatePedidosEmTransitoPorEstado(selectedMonth);
                     });
 
                     // Inicializar com todos os valores
                     updateChartsAndTable("");
-                    updatePedidosEmTransitoPorEstado("");
-
                     loadingMessage.style.display = "none";
 
                     // Saudar o usuário por voz após os dados serem carregados
@@ -293,9 +318,6 @@
                 .catch(error => console.error(error));
         });
     </script>
-
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx"></script>
 </body>
 
 </html>

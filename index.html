@@ -206,7 +206,7 @@
                         const entregasPrazoOptions = {
                             chart: {
                                 type: 'donut',
-                                height: 250, // Alterado para tamanho menor
+                                height: 300, // Tamanho fixo em pixels
                             },
                             series: Object.values(entregasPrazo),
                             labels: Object.keys(entregasPrazo),
@@ -217,7 +217,7 @@
                                 pie: {
                                     donut: {
                                         expandOnClick: false,
-                                        size: '75%', // Ajuste o tamanho do donut conforme necessário
+                                        size: '100%', // O donut ocupará 100% do tamanho fixo
                                         labels: {
                                             show: true,
                                             minAngleToShowLabel: 10, // Defina um ângulo mínimo para mostrar rótulos
@@ -227,6 +227,7 @@
                             }
                         };
                         entregasPrazoChart = new ApexCharts(document.querySelector("#entregasPrazoChart"), entregasPrazoOptions);
+
 
 
 

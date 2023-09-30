@@ -200,7 +200,7 @@
                         const entregasPrazoOptions = {
                             chart: {
                                 type: 'donut',
-                                customScale: 0.8
+                                height: 250, // Alterado para tamanho menor
                             },
                             series: Object.values(entregasPrazo),
                             labels: Object.keys(entregasPrazo),
@@ -210,7 +210,9 @@
                             plotOptions: {
                                 pie: {
                                     donut: {
-                                        size: '65%', // Ajuste o tamanho do donut conforme necessário
+                                        size: '75%', // Ajuste o tamanho do donut conforme necessário
+
+                                        show: true,
                                         labels: {
                                             minAngleToShowLabel: 15, // Defina um ângulo mínimo para mostrar rótulos
                                         }

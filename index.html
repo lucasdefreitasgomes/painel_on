@@ -143,20 +143,18 @@
 
                         // Processar jsonData e criar os gráficos usando a biblioteca ApexCharts.js
                         const pedidosPorMes = Array(12).fill(0);
-                        const entregasPrazo = { "Dentro do Prazo": 0, "Fora do Prazo": 0 };
+                        let totalPedidosDentroPrazo = 0;
+                        let totalPedidosForaPrazo = 0;
                         const pedidosPorEstado = {};
                         const quantidadePedidosPorTipo = { "B2B": 0, "B2C": 0 };
                         let totalPedidos = 0;
 
                         jsonData.forEach(row => {
                             if (selectedMonth === "" || row.Mês === selectedMonth) {
-                                const mesIndex = meses.indexOf(row.Mês);
-                                pedidosPorMes[mesIndex]++;
-
                                 if (row['PRAZO ENTREGA'] === 'NO PRAZO') {
-                                    entregasPrazo["Dentro do Prazo"]++;
+                                    totalPedidosDentroPrazo++;
                                 } else if (row['PRAZO ENTREGA'] === 'FORA DO PRAZO') {
-                                    entregasPrazo["Fora do Prazo"]++;
+                                    totalPedidosForaPrazo++;
                                 }
 
                                 const estado = row.Estado;
@@ -226,8 +224,9 @@
                                 }
                             }
                         };
-                        entregasPrazoChart = new ApexCharts(document.querySelector("#entregasPrazoChart"), entregasPrazoOptions);
 
+                        entregasPrazoChart.updateSeries([totalPedidosDentroPrazo, totalPedidosForaPrazo]);
+                        
                         // Tabela: Pedidos por Estado
                         const pedidosPorEstadoTable = document.querySelector("#pedidosPorEstadoChart");
 

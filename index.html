@@ -217,11 +217,11 @@
                                 pie: {
                                     donut: {
                                         expandOnClick: false,
-                                        size: '65%', // O donut ocupará 100% do tamanho fixo
-                                        labels: {
-                                            show: true,
-                                            minAngleToShowLabel: 5, // Defina um ângulo mínimo para mostrar rótulos
-                                            position: 'outside', // Define a posição dos rótulos como "outside"
+                                        size: '65%', // O donut ocupará 65% do tamanho fixo
+                                    },
+                                    dataLabels: {
+                                        formatter: function (val, opts) {
+                                            return `${opts.w.globals.series[opts.seriesIndex]}%`; // Exibe a porcentagem nos rótulos
                                         }
                                     }
                                 }
@@ -230,10 +230,6 @@
 
                         entregasPrazoChart = new ApexCharts(document.querySelector("#entregasPrazoChart"), entregasPrazoOptions);
                         entregasPrazoChart.render();
-
-
-
-
 
                         // Tabela: Pedidos por Estado
                         const pedidosPorEstadoTable = document.querySelector("#pedidosPorEstadoChart");

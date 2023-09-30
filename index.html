@@ -199,16 +199,27 @@
                         // Gráfico: Entregas no Prazo e Fora do Prazo
                         const entregasPrazoOptions = {
                             chart: {
-                                type: 'bar',
+                                type: 'donut',
                                 height: 250, // Alterado para tamanho menor
                             },
                             series: Object.values(entregasPrazo),
                             labels: Object.keys(entregasPrazo),
                             title: {
                                 align: 'center'
+                            },
+                            plotOptions: {
+                                pie: {
+                                    donut: {
+                                        size: '65%', // Ajuste o tamanho do donut conforme necessário
+                                        labels: {
+                                            minAngleToShowLabel: 15, // Defina um ângulo mínimo para mostrar rótulos
+                                        }
+                                    }
+                                }
                             }
                         };
                         entregasPrazoChart = new ApexCharts(document.querySelector("#entregasPrazoChart"), entregasPrazoOptions);
+
 
                         // Tabela: Pedidos por Estado
                         const pedidosPorEstadoTable = document.querySelector("#pedidosPorEstadoChart");

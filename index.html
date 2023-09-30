@@ -101,13 +101,13 @@
                 window.speechSynthesis.speak(welcomeMessage);
             }
 
-            // Variáveis globais para armazenar os gráficos
+            // Variáveis globais para armazenar os gráficos e dados
             let totalPedidosPorMesChart;
             let entregasPrazoChart;
             let pedidosPorEstadoChart;
             let quantidadePedidosPorTipoChart;
             let pedidosEmTransitoPorEstadoChart;
-            let jsonData;
+            let jsonData; // Variável para armazenar os dados globais
 
             // Função para criar os gráficos
             function createCharts() {
@@ -309,7 +309,7 @@
                     const data = new Uint8Array(buffer);
                     const workbook = XLSX.read(data, { type: 'array' });
                     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                    jsonData = XLSX.utils.sheet_to_json(worksheet);
 
                     const meses = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
 

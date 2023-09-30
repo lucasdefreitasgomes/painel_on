@@ -202,59 +202,61 @@
                         };
                         totalPedidosPorMesChart = new ApexCharts(document.querySelector("#totalPedidosPorMesChart"), totalPedidosPorMesOptions);
 
-                        // Gráfico: Pedidos no Prazo e Fora do Prazo (Gráfico de Barras Empilhadas)
-                        const pedidosPrazoForaPrazoData = meses.map(mes => {
-                            const totalMes = pedidosPorMes[mes] || 0;
-                            const dentroDoPrazo = entregasPrazo["Dentro do Prazo"][mes] || 0;
-                            const foraDoPrazo = entregasPrazo["Fora do Prazo"][mes] || 0;
-                            const dentroDoPrazoPercent = ((dentroDoPrazo / totalMes) * 100).toFixed(2);
-                            const foraDoPrazoPercent = ((foraDoPrazo / totalMes) * 100).toFixed(2);
-                            
-                            return {
-                                mes,
-                                dentroDoPrazo: dentroDoPrazoPercent,
-                                foraDoPrazo: foraDoPrazoPercent,
-                            };
-                        });
-
-                        const pedidosPrazoForaPrazoOptions = {
+                        // Gráfico: Entregas no Prazo e Fora do Prazo
+                        const entregasPrazoOptions = {
                             chart: {
                                 type: 'bar',
-                                height: 250,
+                                height: 300, // Tamanho fixo em pixels
                             },
                             plotOptions: {
                                 bar: {
-                                    horizontal: false,
-                                    stacked: true,
+                                    horizontal: false, // Alterado para gráfico de barras vertical
+                                    columnWidth: '40%', // Espaçamento entre barras
+                                    endingShape: 'rounded', // Barras com cantos arredondados
                                 },
                             },
                             dataLabels: {
-                                enabled: true,
+                                enabled: true, // Mostrar rótulos de dados nas barras
+                                offsetY: -20, // Posição vertical dos rótulos de dados
+                                style: {
+                                    fontSize: '12px', // Tamanho da fonte dos rótulos de dados
+                                },
                                 formatter: function (val) {
-                                    return val + '%';
+                                    return val + '%'; // Adicionar '%' aos rótulos de dados
                                 },
                             },
-                            series: [{
-                                name: 'Dentro do Prazo',
-                                data: pedidosPrazoForaPrazoData.map(item => item.dentroDoPrazo),
-                            }, {
-                                name: 'Fora do Prazo',
-                                data: pedidosPrazoForaPrazoData.map(item => item.foraDoPrazo),
-                            }],
                             xaxis: {
-                                categories: pedidosPrazoForaPrazoData.map(item => item.mes),
+                                categories: Object.keys(entregasPrazo),
+                            },
+                            yaxis: {
+                                title: {
+                                    text: 'Porcentagem',
+                                },
                             },
                             title: {
+                                text: 'Entregas no Prazo e Fora do Prazo',
                                 align: 'center',
                             },
+                            series: [
+                                {
+                                    name: 'Dentro do Prazo',
+                                    data: Object.values(entregasPrazo)["Dentro do Prazo"],
+                                },
+                                {
+                                    name: 'Fora do Prazo',
+                                    data: Object.values(entregasPrazo)["Fora do Prazo"],
+                                },
+                            ],
                             legend: {
                                 position: 'top',
                             },
-                            colors: ['#003369', '#FF0000'], // Cores para Dentro do Prazo e Fora do Prazo
                         };
 
-                        const pedidosPrazoForaPrazoChart = new ApexCharts(document.querySelector("#entregasPrazoChart"), pedidosPrazoForaPrazoOptions);
-                        pedidosPrazoForaPrazoChart.render();
+                        entregasPrazoChart = new ApexCharts(document.querySelector("#entregasPrazoChart"), entregasPrazoOptions);
+
+
+
+
 
                         // Tabela: Pedidos por Estado
                         const pedidosPorEstadoTable = document.querySelector("#pedidosPorEstadoChart");

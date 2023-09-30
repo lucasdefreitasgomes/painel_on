@@ -202,34 +202,59 @@
                         };
                         totalPedidosPorMesChart = new ApexCharts(document.querySelector("#totalPedidosPorMesChart"), totalPedidosPorMesOptions);
 
-                        // Gráfico: Entregas no Prazo e Fora do Prazo
-                        const entregasPrazoOptions = {
+                        // Gráfico: Pedidos no Prazo e Fora do Prazo (Gráfico de Barras Empilhadas)
+                        const pedidosPrazoForaPrazoData = meses.map(mes => {
+                            const totalMes = pedidosPorMes[mes] || 0;
+                            const dentroDoPrazo = entregasPrazo["Dentro do Prazo"][mes] || 0;
+                            const foraDoPrazo = entregasPrazo["Fora do Prazo"][mes] || 0;
+                            const dentroDoPrazoPercent = ((dentroDoPrazo / totalMes) * 100).toFixed(2);
+                            const foraDoPrazoPercent = ((foraDoPrazo / totalMes) * 100).toFixed(2);
+                            
+                            return {
+                                mes,
+                                dentroDoPrazo: dentroDoPrazoPercent,
+                                foraDoPrazo: foraDoPrazoPercent,
+                            };
+                        });
+
+                        const pedidosPrazoForaPrazoOptions = {
                             chart: {
-                                type: 'donut',
-                                height: 300, // Tamanho fixo em pixels
-                            },
-                            series: Object.values(entregasPrazo),
-                            labels: Object.keys(entregasPrazo),
-                            title: {
-                                align: 'center'
+                                type: 'bar',
+                                height: 250,
                             },
                             plotOptions: {
-                                pie: {
-                                    donut: {
-                                        expandOnClick: false,
-                                        size: '100%', // O donut ocupará 100% do tamanho fixo
-                                        labels: {
-                                            show: true,
-                                            minAngleToShowLabel: 10, // Defina um ângulo mínimo para mostrar rótulos
-                                        }
-                                    }
-                                }
-                            }
+                                bar: {
+                                    horizontal: false,
+                                    stacked: true,
+                                },
+                            },
+                            dataLabels: {
+                                enabled: true,
+                                formatter: function (val) {
+                                    return val + '%';
+                                },
+                            },
+                            series: [{
+                                name: 'Dentro do Prazo',
+                                data: pedidosPrazoForaPrazoData.map(item => item.dentroDoPrazo),
+                            }, {
+                                name: 'Fora do Prazo',
+                                data: pedidosPrazoForaPrazoData.map(item => item.foraDoPrazo),
+                            }],
+                            xaxis: {
+                                categories: pedidosPrazoForaPrazoData.map(item => item.mes),
+                            },
+                            title: {
+                                align: 'center',
+                            },
+                            legend: {
+                                position: 'top',
+                            },
+                            colors: ['#003369', '#FF0000'], // Cores para Dentro do Prazo e Fora do Prazo
                         };
-                        entregasPrazoChart = new ApexCharts(document.querySelector("#entregasPrazoChart"), entregasPrazoOptions);
 
-
-
+                        const pedidosPrazoForaPrazoChart = new ApexCharts(document.querySelector("#entregasPrazoChart"), pedidosPrazoForaPrazoOptions);
+                        pedidosPrazoForaPrazoChart.render();
 
                         // Tabela: Pedidos por Estado
                         const pedidosPorEstadoTable = document.querySelector("#pedidosPorEstadoChart");

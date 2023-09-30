@@ -203,17 +203,21 @@
                         totalPedidosPorMesChart = new ApexCharts(document.querySelector("#totalPedidosPorMesChart"), totalPedidosPorMesOptions);
 
                         // Gráfico: Entregas no Prazo e Fora do Prazo (Gráfico de Barra Empilhada)
+                        const totalEntregas = entregasPrazo["Dentro do Prazo"] + entregasPrazo["Fora do Prazo"];
+                        const dentroDoPrazoPorcentagem = ((entregasPrazo["Dentro do Prazo"] / totalEntregas) * 100).toFixed(2);
+                        const foraDoPrazoPorcentagem = ((entregasPrazo["Fora do Prazo"] / totalEntregas) * 100).toFixed(2);
+
                         const entregasPrazoOptions = {
                             chart: {
                                 type: 'bar',
                                 height: 250, // Alterado para tamanho menor
                             },
                             series: [{
-                                name: 'Dentro do Prazo',
-                                data: [entregasPrazo["Dentro do Prazo"]]
+                                name: 'Entregas no Prazo',
+                                data: [dentroDoPrazoPorcentagem]
                             }, {
-                                name: 'Fora do Prazo',
-                                data: [entregasPrazo["Fora do Prazo"]]
+                                name: 'Entregas Fora do Prazo',
+                                data: [foraDoPrazoPorcentagem]
                             }],
                             xaxis: {
                                 categories: ['Entregas'],
@@ -227,12 +231,17 @@
                                     stacked: true,
                                 },
                             },
+                            tooltip: {
+                                y: {
+                                    formatter: function (value) {
+                                        return value + "%";
+                                    }
+                                }
+                            },
                             colors: ['#003369', '#FF0000'], // Cores para "Dentro do Prazo" e "Fora do Prazo"
                         };
 
                         entregasPrazoChart = new ApexCharts(document.querySelector("#entregasPrazoChart"), entregasPrazoOptions);
-
-
 
                         // Tabela: Pedidos por Estado
                         const pedidosPorEstadoTable = document.querySelector("#pedidosPorEstadoChart");

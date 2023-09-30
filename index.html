@@ -13,16 +13,22 @@
 </head>
 
 <body>
-    <div id="loadingMessage" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(255, 255, 255, 0.8); padding: 1rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); z-index: 9999;">
+    <div id="loadingMessage"
+        style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(255, 255, 255, 0.8); padding: 1rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); z-index: 9999;">
         Carregando dados aguarde...
     </div>
     <header style="display: flex; align-items: center; justify-content: center; padding: 1rem;">
         <div style="display: flex; align-items: center;">
-            <img style="width: 365px;" src="https://br.kuehne-nagel.com/o/kn-lgo-theme/images/kuehne-nagel-logo-blue.png" alt="Kuehne + Nagel Logo" width="100">
-            <h1 style="font-size: 2rem; margin: 0 1rem; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);">DASHBOARD - ON RUNNING</h1>
+            <img style="width: 365px;"
+                src="https://br.kuehne-nagel.com/o/kn-lgo-theme/images/kuehne-nagel-logo-blue.png"
+                alt="Kuehne + Nagel Logo" width="100">
+            <h1 style="font-size: 2rem; margin: 0 1rem; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);">DASHBOARD - ON
+                RUNNING</h1>
         </div>
         <div style="display: flex; align-items: center;">
-            <img style="width: 50px;height: 50px;border-radius: 50%;" src="https://www.therunnershub.net/wp-content/uploads/2017/01/11249876_1635506986735635_175419393_a.jpg" alt="The Runners Hub Logo" width="100" style="background: none;">
+            <img style="width: 50px;height: 50px;border-radius: 50%;"
+                src="https://www.therunnershub.net/wp-content/uploads/2017/01/11249876_1635506986735635_175419393_a.jpg"
+                alt="The Runners Hub Logo" width="100" style="background: none;">
         </div>
     </header>
     <div class="month-filter">
@@ -196,29 +202,36 @@
                         };
                         totalPedidosPorMesChart = new ApexCharts(document.querySelector("#totalPedidosPorMesChart"), totalPedidosPorMesOptions);
 
-                        // Gráfico: Entregas no Prazo e Fora do Prazo
+                        // Gráfico: Entregas no Prazo e Fora do Prazo (Gráfico de Barra Empilhada)
                         const entregasPrazoOptions = {
                             chart: {
-                                type: 'donut',
+                                type: 'bar',
                                 height: 250, // Alterado para tamanho menor
                             },
-                            series: Object.values(entregasPrazo),
-                            labels: Object.keys(entregasPrazo),
+                            series: [{
+                                name: 'Dentro do Prazo',
+                                data: [entregasPrazo["Dentro do Prazo"]]
+                            }, {
+                                name: 'Fora do Prazo',
+                                data: [entregasPrazo["Fora do Prazo"]]
+                            }],
+                            xaxis: {
+                                categories: ['Entregas'],
+                            },
                             title: {
                                 align: 'center'
                             },
                             plotOptions: {
-                                pie: {
-                                    donut: {
-                                        size: '65%', // Ajuste o tamanho do donut conforme necessário
-                                        labels: {
-                                            minAngleToShowLabel: 15, // Defina um ângulo mínimo para mostrar rótulos
-                                        }
-                                    }
-                                }
-                            }
+                                bar: {
+                                    horizontal: true,
+                                    stacked: true,
+                                },
+                            },
+                            colors: ['#003369', '#FF0000'], // Cores para "Dentro do Prazo" e "Fora do Prazo"
                         };
+
                         entregasPrazoChart = new ApexCharts(document.querySelector("#entregasPrazoChart"), entregasPrazoOptions);
+
 
 
                         // Tabela: Pedidos por Estado

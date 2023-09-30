@@ -210,7 +210,8 @@
                         const entregasPrazoOptions = {
                             chart: {
                                 type: 'bar',
-                                height: 250, // Alterado para tamanho menor
+                                height: 250, // Altura do gráfico
+                                width: 400, // Largura do gráfico (aumente conforme necessário)
                             },
                             series: [{
                                 name: 'Entregas no Prazo',
@@ -242,6 +243,7 @@
                         };
 
                         entregasPrazoChart = new ApexCharts(document.querySelector("#entregasPrazoChart"), entregasPrazoOptions);
+
 
                         // Tabela: Pedidos por Estado
                         const pedidosPorEstadoTable = document.querySelector("#pedidosPorEstadoChart");

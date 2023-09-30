@@ -221,12 +221,16 @@
                                         labels: {
                                             show: true,
                                             minAngleToShowLabel: 5, // Defina um ângulo mínimo para mostrar rótulos
+                                            position: 'outside', // Define a posição dos rótulos como "outside"
                                         }
                                     }
                                 }
                             }
                         };
+
                         entregasPrazoChart = new ApexCharts(document.querySelector("#entregasPrazoChart"), entregasPrazoOptions);
+                        entregasPrazoChart.render();
+
 
 
 

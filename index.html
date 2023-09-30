@@ -205,7 +205,7 @@
                         // Gráfico: Entregas no Prazo e Fora do Prazo
                         const entregasPrazoOptions = {
                             chart: {
-                                type: 'pie', // Altere o tipo para 'pie' (pizza)
+                                type: 'donut',
                                 height: 250, // Tamanho fixo em pixels
                             },
                             series: Object.values(entregasPrazo),
@@ -215,22 +215,18 @@
                             },
                             plotOptions: {
                                 pie: {
-                                    size: '75%', // Ajuste o tamanho da pizza conforme necessário
-                                    startAngle: -90, // Define o ângulo inicial para -90 graus (para começar na parte superior)
-                                    endAngle: 90, // Define o ângulo final para 90 graus (para criar uma meia pizza)
                                     donut: {
                                         expandOnClick: false,
-                                        background: 'transparent', // Remova o preenchimento do fundo
-                                    },
-                                    labels: {
-                                        show: true,
-                                        minAngleToShowLabel: 1, // Defina um ângulo mínimo para mostrar rótulos
-                                        position: 'top' // Coloque os rótulos na parte superior da pizza
+                                        size: '65%', // O donut ocupará 100% do tamanho fixo
+                                        labels: {
+                                            show: true,
+                                            minAngleToShowLabel: 1, // Defina um ângulo mínimo para mostrar rótulos
+                                        }
                                     }
                                 }
                             }
                         };
-
+                        entregasPrazoChart = new ApexCharts(document.querySelector("#entregasPrazoChart"), entregasPrazoOptions);
 
                         // Tabela: Pedidos por Estado
                         const pedidosPorEstadoTable = document.querySelector("#pedidosPorEstadoChart");
